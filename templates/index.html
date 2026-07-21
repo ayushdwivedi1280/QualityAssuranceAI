@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Assurance AI | Textile & Manufacturing Damage Detection</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+
+    <!-- AI Boot Sequence Splash Screen -->
+    <div id="splash-screen" class="splash-screen d-flex flex-column justify-content-center align-items-center">
+        <div class="logo-container">
+            <i class="fa-solid fa-microchip ai-icon"></i>
+            <h1 class="glitch" data-text="QA.AI CORE">QA.AI CORE</h1>
+        </div>
+        <div class="boot-sequence mt-4 text-start">
+            <p id="boot-text-1" class="boot-text">Initialize SYSTEM...</p>
+            <p id="boot-text-2" class="boot-text">Loading AI Model...</p>
+            <p id="boot-text-3" class="boot-text">Initializing Neural Network...</p>
+            <p id="boot-text-4" class="boot-text">Loading YOLO Weights...</p>
+            <p id="boot-text-5" class="boot-text">Preparing Detection Engine...</p>
+            <p id="boot-text-6" class="boot-text text-success">SYSTEM READY.</p>
+        </div>
+        <div class="progress-bar-container mt-3">
+            <div class="progress-bar-fill" id="boot-progress"></div>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden until boot finishes) -->
+    <div id="main-content" class="container-fluid d-none">
+        <!-- Navbar -->
+        <nav class="navbar navbar-dark glass-nav mb-4">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1 fs-3 font-orbitron text-neon-blue">
+                    <i class="fa-solid fa-industry me-2"></i> Quality Assurance AI
+                </span>
+                <div class="nav-links">
+                    <a href="/" class="btn btn-outline-neon active me-2"><i class="fa-solid fa-image"></i> Image Upload</a>
+                    <a href="/camera" class="btn btn-outline-neon"><i class="fa-solid fa-video"></i> Live Camera</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row px-3">
+            <!-- Sidebar: Detection History -->
+            <div class="col-md-3">
+                <div class="glass-card h-100 p-3">
+                    <h4 class="font-orbitron text-neon-cyan mb-3 border-bottom border-secondary pb-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> History Log
+                    </h4>
+                    <div id="history-container" class="history-list">
+                        <!-- History items injected via JS -->
+                        <div class="text-muted small text-center mt-4">No recent detections.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Upload and Scanner -->
+            <div class="col-md-6">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <h2 class="font-orbitron text-white glitch-title">Textile Defect Detection</h2>
+                    <p class="text-muted font-rajdhani fs-5">AI-Powered Industrial Fabric Inspection System</p>
+                </div>
+
+                <div class="glass-card p-4 main-scanner-card text-center position-relative">
+                    
+                    <!-- Upload State -->
+                    <div id="upload-state">
+                        <label for="imageUpload" class="upload-area w-100">
+                            <i class="fa-solid fa-cloud-arrow-up fs-1 text-neon-blue mb-3"></i>
+                            <h4 class="font-rajdhani">Select or Drop Image</h4>
+                            <p class="text-muted small">JPG, JPEG, PNG</p>
+                        </label>
+                        <input type="file" id="imageUpload" class="d-none" accept=".jpg,.jpeg,.png">
+                        
+                        <div id="preview-container" class="mt-3 d-none">
+                            <img id="imagePreview" src="" alt="Preview" class="img-fluid rounded border border-secondary mb-3">
+                            <button id="btn-detect" class="btn btn-neon-blue w-100 py-2 fs-5 font-orbitron">
+                                <i class="fa-solid fa-crosshairs"></i> INITIATE SCAN
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scanning Animation State -->
+                    <div id="scanning-state" class="d-none position-relative scanner-wrapper">
+                        <img id="scanImage" src="" class="img-fluid rounded border border-primary scan-target">
+                        <div class="scanner-overlay">
+                            <div class="scanner-laser"></div>
+                            <div class="scanner-grid"></div>
+                            <div class="target-box top-left"></div>
+                            <div class="target-box top-right"></div>
+                            <div class="target-box bottom-left"></div>
+                            <div class="target-box bottom-right"></div>
+                        </div>
+                        <div class="hud-interface font-orbitron">
+                            <div class="hud-top-left">SYS: ACTIVE</div>
+                            <div class="hud-top-right text-warning"><i class="fa-solid fa-triangle-exclamation blink"></i> ANALYZING</div>
+                            <div class="hud-bottom-left" id="scan-progress">0%</div>
+                            <div class="hud-bottom-right">LOC: MAIN</div>
+                        </div>
+                        <div class="scan-status mt-3 font-orbitron text-neon-cyan glow-text" id="scan-status-text">
+                            Acquiring Target...
+                        </div>
+                    </div>
+
+                    <!-- Result State -->
+                    <div id="result-state" class="d-none">
+                        <img id="resultImage" src="" class="img-fluid rounded border border-success mb-3 shadow-neon-green">
+                        <div class="d-flex justify-content-between">
+                            <button id="btn-reset" class="btn btn-outline-secondary w-45"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+                            <a id="btn-download" href="#" download class="btn btn-outline-success w-45"><i class="fa-solid fa-download"></i> Download</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Results & Stats -->
+            <div class="col-md-3">
+                <!-- Result Panel -->
+                <div class="glass-card mb-4 p-3">
+                    <h4 class="font-orbitron text-neon-cyan mb-3 border-bottom border-secondary pb-2">
+                        <i class="fa-solid fa-chart-pie"></i> Analysis
+                    </h4>
+                    
+                    <div id="analysis-placeholder" class="text-center text-muted py-4">
+                        <i class="fa-solid fa-satellite-dish fs-1 mb-2 opacity-50"></i>
+                        <p>Awaiting feed...</p>
+                    </div>
+
+                    <div id="analysis-results" class="d-none">
+                        <!-- Status Banner -->
+                        <div id="status-banner" class="alert mb-3 text-center font-orbitron fw-bold">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Info Rows -->
+                        <div class="info-row d-flex justify-content-between mb-2 border-bottom border-dark pb-1">
+                            <span class="text-muted small">Inference Time:</span>
+                            <span id="res-time" class="font-rajdhani fw-bold text-neon-cyan">--</span>
+                        </div>
+                        <div class="info-row d-flex justify-content-between mb-2 border-bottom border-dark pb-1">
+                            <span class="text-muted small">Total Objects:</span>
+                            <span id="res-count" class="font-rajdhani fw-bold text-white">0</span>
+                        </div>
+                        <div class="info-row d-flex justify-content-between mb-2 border-bottom border-dark pb-1">
+                            <span class="text-muted small">Device:</span>
+                            <span id="res-device" class="font-rajdhani fw-bold text-neon-blue">--</span>
+                        </div>
+                        <div class="info-row d-flex justify-content-between mb-3 border-bottom border-dark pb-1">
+                            <span class="text-muted small">Engine:</span>
+                            <span id="res-model" class="font-rajdhani fw-bold text-white">YOLOv8</span>
+                        </div>
+
+                        <!-- Defect List -->
+                        <div id="defect-list" class="mt-3">
+                            <!-- Populated by JS -->
+                        </div>
+                        
+                        <!-- Circular Gauge (Confidence) -->
+                        <div class="gauge-container text-center mt-4 d-none" id="confidence-gauge">
+                            <div class="circular-progress">
+                                <div class="value-container font-orbitron">0%</div>
+                            </div>
+                            <span class="small text-muted font-rajdhani mt-2 d-block">Max Confidence</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fixed Stats Panel -->
+                <div class="glass-card p-3">
+                    <h5 class="font-orbitron text-neon-blue mb-3">
+                        <i class="fa-solid fa-server"></i> System Stats
+                    </h5>
+                    <div class="stat-item mb-2">
+                        <span class="text-muted small">Model Accuracy:</span>
+                        <div class="progress bg-dark mt-1" style="height: 15px;">
+                            <div class="progress-bar bg-info" style="width: 74.9%; font-size: 10px;">mAP50 74.9%</div>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-2">
+                        <span class="text-muted small">Precision:</span>
+                        <div class="progress bg-dark mt-1" style="height: 15px;">
+                            <div class="progress-bar bg-success" style="width: 81.2%; font-size: 10px;">81.2%</div>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <span class="text-muted small">Recall:</span>
+                        <div class="progress bg-dark mt-1" style="height: 15px;">
+                            <div class="progress-bar bg-warning" style="width: 68.4%; font-size: 10px;">68.4%</div>
+                        </div>
+                    </div>
+                    <div class="info-row d-flex justify-content-between border-top border-secondary pt-2">
+                        <span class="text-muted small">GPU Training:</span>
+                        <span class="font-rajdhani fw-bold text-success">Tesla T4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+/* ============================================================
+   Quality Assurance AI | CSS Stylesheet
+   Theme: Industrial AI / Cyberpunk / Iron Man HUD
+   ============================================================ */
+
+   :root {
+    --bg-dark: #0a0e17;
+    --neon-blue: #00f3ff;
+    --neon-cyan: #0ff;
+    --neon-green: #00ff88;
+    --neon-red: #ff2a2a;
+    --glass-bg: rgba(10, 14, 23, 0.7);
+    --glass-border: rgba(0, 243, 255, 0.2);
+}
+
+body.dark-theme {
+    background-color: var(--bg-dark);
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.05), transparent 25%);
+    overflow-x: hidden;
+}
+
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
+.font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+
+.text-neon-blue { color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,243,255,0.5); }
+.text-neon-cyan { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0,255,255,0.5); }
+
+/* ================== GLASSMORPHISM & CARDS ================== */
+.glass-nav {
+    background: rgba(5, 7, 12, 0.8) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.3s ease;
+}
+.glass-card:hover {
+    border-color: rgba(0, 243, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(0, 243, 255, 0.1);
+}
+
+.btn-neon-blue {
+    background: transparent;
+    color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.btn-neon-blue:hover {
+    background: rgba(0, 243, 255, 0.1);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+}
+.btn-outline-neon {
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+}
+.btn-outline-neon:hover, .btn-outline-neon.active {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* ================== SPLASH SCREEN ================== */
+.splash-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: var(--bg-dark);
+    z-index: 9999;
+    display: flex;
+}
+.ai-icon {
+    font-size: 5rem;
+    color: var(--neon-blue);
+    text-shadow: 0 0 20px var(--neon-blue);
+    margin-bottom: 20px;
+    animation: pulseIcon 2s infinite;
+}
+.glitch {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    color: white;
+    position: relative;
+}
+.boot-text {
+    font-family: 'Courier New', Courier, monospace;
+    color: #0f0;
+    margin: 5px 0;
+    opacity: 0;
+}
+.progress-bar-container {
+    width: 300px;
+    height: 4px;
+    background: #222;
+    overflow: hidden;
+    border-radius: 2px;
+}
+.progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+    transition: width 0.1s linear;
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 40px var(--neon-blue); }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* ================== UPLOAD & SCANNER ================== */
+.upload-area {
+    border: 2px dashed rgba(0,243,255,0.4);
+    border-radius: 10px;
+    padding: 40px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-block;
+}
+.upload-area:hover {
+    background: rgba(0,243,255,0.05);
+    border-color: var(--neon-blue);
+}
+
+.scanner-wrapper {
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+    display: inline-block;
+}
+.scan-target {
+    max-height: 500px;
+    object-fit: contain;
+    filter: sepia(0.3) hue-rotate(180deg) brightness(0.8) contrast(1.2); /* Cyberpunk look initially */
+}
+
+/* Scanner Laser */
+.scanner-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+.scanner-laser {
+    width: 100%;
+    height: 2px;
+    background: var(--neon-red);
+    box-shadow: 0 0 15px 2px var(--neon-red);
+    position: absolute;
+    animation: scanLine 2s linear infinite;
+}
+.scanner-grid {
+    position: absolute;
+    width: 100%; height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.5;
+}
+
+@keyframes scanLine {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+/* Target Boxes */
+.target-box {
+    position: absolute;
+    width: 30px; height: 30px;
+    border-color: var(--neon-cyan);
+    border-style: solid;
+    animation: pulseTarget 1.5s infinite;
+}
+.top-left { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+.top-right { top: 10px; right: 10px; border-width: 3px 3px 0 0; }
+.bottom-left { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; }
+.bottom-right { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+
+@keyframes pulseTarget {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+/* HUD Interface */
+.hud-interface {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    padding: 15px;
+    font-size: 14px;
+    color: var(--neon-blue);
+}
+.hud-top-left { position: absolute; top: 15px; left: 15px; }
+.hud-top-right { position: absolute; top: 15px; right: 15px; }
+.hud-bottom-left { position: absolute; bottom: 15px; left: 15px; font-size: 1.5rem; font-weight: bold;}
+.hud-bottom-right { position: absolute; bottom: 15px; right: 15px; }
+
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+/* ================== CIRCULAR GAUGE ================== */
+.circular-progress {
+    position: relative;
+    height: 120px; width: 120px;
+    border-radius: 50%;
+    background: conic-gradient(var(--neon-green) 0deg, #222 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+}
+.circular-progress::before {
+    content: "";
+    position: absolute;
+    height: 100px; width: 100px;
+    border-radius: 50%;
+    background-color: var(--bg-dark);
+}
+.value-container {
+    position: relative;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* ================== UTILS ================== */
+.history-item {
+    border-left: 3px solid var(--neon-cyan);
+    background: rgba(255,255,255,0.05);
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+.history-item:hover { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
+
+.shadow-neon-green {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.glow-text {
+    text-shadow: 0 0 8px currentColor;
+}
